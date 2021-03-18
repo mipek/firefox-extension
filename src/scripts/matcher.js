@@ -13,10 +13,9 @@ const NOMATCH_COLOR = '#D3D3D3';
 const WHITE = chrome.i18n.getMessage('white');
 const BLACK = chrome.i18n.getMessage('black');
 
-function findProxyMatch(url, activeSettings) {
+function findProxyMatch(url, incognito, activeSettings) {
   // note: we've already thrown out inactive settings and inactive patterns in background.js.
   // we're not iterating over them
-  
   if (activeSettings.mode === 'patterns') {
     // Unfortunately, since Firefox 57 and some releases afterwards, we were unable
     // to get anything of the URL except scheme, port, and host (because of Fx's PAC
@@ -28,6 +27,11 @@ function findProxyMatch(url, activeSettings) {
     const hostPort = parsedUrl.host; // This includes port if one is specified
 
     for (const proxy of activeSettings.proxySettings) {
+
+      // Incognito proxies are only relevent when private browsing mode is active.
+      if (!incognito && proxy.incognitoOnly) {
+        continue;
+      }
       
       // Check black patterns first
       const blackMatch = proxy.blackPatterns.find(item => 
@@ -43,7 +47,7 @@ function findProxyMatch(url, activeSettings) {
         (item.protocols === schemeSet.all || item.protocols === schemeSet[scheme]) &&
           item.pattern.test(hostPort));
       
-      if (whiteMatch) {
+      if (whiteMatch && (!incognito || proxy.incognitoOnly)) {
   			// found a whitelist match, end here
         const title = Utils.getProxyTitle(proxy);
         Utils.updateIcon('images/icon.svg', proxy.color, title, false, title, false);
@@ -52,9 +56,14 @@ function findProxyMatch(url, activeSettings) {
   		}
     }
     // no white matches in any settings
-    sendToUnmatchedLog(url);
-    Utils.updateIcon('images/gray.svg', null, NOMATCH_TEXT, false, NOMATCH_TEXT, false);
-    return {type: 'direct'};
+    if (!incognito) {
+      sendToUnmatchedLog(url);
+      Utils.updateIcon('images/gray.svg', null, NOMATCH_TEXT, false, NOMATCH_TEXT, false);
+      return {type: 'direct'};
+    } else {
+      // prevent doing a connection when no incognito proxy is available
+      return {type: 'http', host: '$', port: 1};
+    }
   }
   else if (activeSettings.mode === 'disabled') {
     // Generally we won't get to this block because our proxy handler is turned off in this mode.

@@ -95,6 +95,7 @@
 
   "proxyType": { "message": "Proxy Type" },
   "color": { "message": "Color" },
+  "incognito": { "message": "Only use in Incognito / Private Browsing mode" },
   "patternShortcuts": { "message": "Pattern Shortcuts"},
   "title": { "message": "Title or Description (optional)" },
   "ip": { "message": "Proxy IP address or DNS name" },

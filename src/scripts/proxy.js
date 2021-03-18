@@ -58,6 +58,7 @@ const proxyPassword = document.querySelector('#proxyPassword');
 const proxyActive = document.querySelector('#proxyActive');
 const proxyDNS = document.querySelector('#proxyDNS');
 const pacURL = document.querySelector('#pacURL');
+const proxyIncognitoOnly = document.querySelector('#incognitoOnly');
 
 // --- remove nodes completely for FP Basic
 FOXYPROXY_BASIC && document.querySelectorAll('.notForBasic').forEach(item => item.remove());
@@ -127,6 +128,7 @@ function processOptions() {
     // checkbox
     proxyActive.checked = proxy.active;
     proxyDNS.checked = proxy.proxyDNS || false;
+    proxyIncognitoOnly.checked = proxy.incognitoOnly || false;
 
     // color
     color.fromString(proxy.color || DEFAULT_COLOR);
@@ -146,6 +148,7 @@ function makeProxy() {
   proxy.color = document.querySelector('#colorChooser').value;
   proxy.title = proxyTitle.value;
   proxy.active = proxyActive.checked;
+  proxy.incognitoOnly = proxyIncognitoOnly.checked;
   
   if (proxy.type !== PROXY_TYPE_NONE) {
 

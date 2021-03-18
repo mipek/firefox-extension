@@ -138,7 +138,7 @@ function storageOnChanged(changes, area) {
 }
 
 function proxyRequest(requestInfo) {
-  return findProxyMatch(requestInfo.url, activeSettings);
+  return findProxyMatch(requestInfo.url, requestInfo.incognito, activeSettings);
 }
 
 function setActiveSettings(settings) {

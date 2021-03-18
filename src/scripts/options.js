@@ -219,11 +219,14 @@ function processOptions(pref) {
       node[3].title = item.country;
     }
     item.username && item.password && node[4].classList.add('on');
-    node[5].id = id + '-onoff';
-    node[5].checked = item.active;
-    node[6].setAttribute('for', node[5].id);
+    if (item.incognitoOnly) {
+      node[5].classList.add('on');
+    }
+    node[6].id = id + '-onoff';
+    node[6].checked = item.active;
+    node[7].setAttribute('for', node[6].id);
 
-    FOXYPROXY_BASIC && (node[8].style.display = 'none');
+    FOXYPROXY_BASIC && (node[9].style.display = 'none');
 
     // setting div colors
     switch (true) {
